@@ -14,40 +14,53 @@ def save_data(products):
 
 def display_all_products(products):
     if not products:
-        print("=> Kho hàng trống.") [cite: 112]
+        print("=> Kho hàng trống.")
         return
-    print("-" * 70)
+    print("-" * 75)
     for p in products:
-        print(f"ID: {p['id']} | Tên: {p['name']} | Giá: {p['price']} | SL: {p['quantity']}")
-    print("-" * 70)
+        print(f"ID: {p['id']} | {p['name'][:20]:<20} | {p['price']:>10}đ | SL: {p['quantity']}")
+    print("-" * 75)
 
 def add_product(products):
     print("\n--- THÊM SẢN PHẨM ---")
-    new_id = f"LT{len(products) + 1:02d}" [cite: 93]
+    # Tạo ID duy nhất bằng cách cộng 1 vào độ dài [cite: 93]
+    new_id = f"LT{len(products) + 1:02d}"
     name = input("Nhập tên: ")
     brand = input("Nhập thương hiệu: ")
     price = int(input("Nhập giá: "))
     qty = int(input("Nhập số lượng: "))
     products.append({"id": new_id, "name": name, "brand": brand, "price": price, "quantity": qty})
-    print("=> Đã thêm thành công!")
     return products
 
 def search_product_by_name(products):
-    keyword = input("Nhập tên sản phẩm cần tìm: ").lower() [cite: 107]
-    results = [p for p in products if keyword in p['name'].lower()] [cite: 108, 109]
-    print(f"\n--- KẾT QUẢ TÌM KIẾM ---")
+    keyword = input("Nhập tên sản phẩm cần tìm: ").lower()
+    # Tìm kiếm không phân biệt hoa thường [cite: 108, 109]
+    results = [p for p in products if keyword in p['name'].lower()]
     display_all_products(results)
 
 def delete_product(products):
-    """Hỏi mã sản phẩm và xóa khỏi danh sách""" [cite: 105]
+    """SỬA LỖI: Dùng list comprehension để lọc bỏ phần tử cần xóa"""
     id_del = input("Nhập mã sản phẩm cần xóa: ")
-    for p in products:
-        if p['id'] == id_del:
-            products.remove(p)
-            print(f"=> Đã xóa sản phẩm {id_del}")
-            return products
-    print("=> Không tìm thấy mã sản phẩm để xóa.")
+    len_before = len(products)
+    products = [p for p in products if p['id'] != id_del]
+    
+    if len(products) < len_before:
+        print(f"=> Đã xóa thành công {id_del}!")
+    else:
+        print("=> Không tìm thấy mã sản phẩm.")
     return products
 
-# Hàm này sẽ làm ở lần 7
-def update_product(products): pass
+def update_product(products):
+    """HÀM MỚI: Cập nhật thông tin sản phẩm [cite: 100]"""
+    id_up = input("Nhập mã sản phẩm cần sửa: ")
+    for p in products:
+        if p['id'] == id_up:
+            print(f"Đang sửa: {p['name']}")
+            p['name'] = input("Tên mới: ")
+            p['brand'] = input("Thương hiệu mới: ")
+            p['price'] = int(input("Giá mới: "))
+            p['quantity'] = int(input("Số lượng mới: "))
+            print("=> Cập nhật thành công!")
+            return products
+    print("=> Không tìm thấy mã sản phẩm để sửa.")
+    return products
